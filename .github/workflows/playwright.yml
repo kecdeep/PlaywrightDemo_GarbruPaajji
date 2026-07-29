@@ -28,8 +28,14 @@ on:
           - UAT
           - PROD
 
+      testFile:
+        description: "Playwright Test File"
+        required: true
+        default: "tests/ui/alltest.spec.js"
+
 jobs:
   test:
+    name: "${{ matrix.browser }} - ${{ github.event.inputs.environment || 'QA' }}"
     timeout-minutes: 60
     runs-on: ubuntu-latest
 
@@ -60,9 +66,15 @@ jobs:
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
 
+      - name: Show Execution Details
+        run: |
+          echo "Environment : $ENV"
+          echo "Browser     : ${{ matrix.browser }}"
+          echo "Test File   : ${{ github.event.inputs.testFile || 'tests/ui/alltest.spec.js' }}"
+
       - name: Run Playwright Tests
         run: |
-          npx playwright test --project=${{ matrix.browser }}
+          npx playwright test "${{ github.event.inputs.testFile || 'tests/ui/alltest.spec.js' }}" --project=${{ matrix.browser }}
         continue-on-error: true
 
       - name: Generate Allure Report
