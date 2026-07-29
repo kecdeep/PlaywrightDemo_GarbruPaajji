@@ -2,23 +2,48 @@ name: Playwright Enterprise Tests
 
 on:
   push:
-    branches: [main, master]
+    branches:
+      - main
+      - master
 
   pull_request:
-    branches: [main, master]
+    branches:
+      - main
+      - master
 
   workflow_dispatch:
+    inputs:
+      environment:
+        description: "Select Environment"
+        required: true
+        default: QA
+        type: choice
+        options:
+          - QA
+          - UAT
+          - PROD
 
 jobs:
   test:
-    runs-on: ubuntu-latest
     timeout-minutes: 60
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        browser:
+          - chromium
+          - firefox
+          - webkit
+
+    env:
+      ENV: ${{ github.event.inputs.environment || 'QA' }}
 
     steps:
-      - name: Checkout Code
+      - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Setup Node
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 22
@@ -27,11 +52,12 @@ jobs:
       - name: Install Dependencies
         run: npm ci
 
-      - name: Install Browsers
+      - name: Install Playwright Browsers
         run: npx playwright install --with-deps
 
       - name: Run Playwright Tests
-        run: npx playwright test
+        run: |
+          npx playwright test --project=${{ matrix.browser }}
         continue-on-error: true
 
       - name: Generate Allure Report
@@ -43,19 +69,37 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: playwright-report
+          name: playwright-report-${{ matrix.browser }}
           path: playwright-report/
+          if-no-files-found: ignore
 
       - name: Upload Allure Report
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: allure-report
+          name: allure-report-${{ matrix.browser }}
           path: allure-report/
+          if-no-files-found: ignore
 
       - name: Upload Test Results
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: test-results
+          name: test-results-${{ matrix.browser }}
           path: test-results/
+          if-no-files-found: ignore
+
+      - name: Upload Allure History
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-history-${{ matrix.browser }}
+          path: allure-report/history
+          if-no-files-found: ignore
+
+      - name: Deploy Allure Report to GitHub Pages
+        if: github.ref == 'refs/heads/main' && matrix.browser == 'chromium'
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./allure-report
