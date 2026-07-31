@@ -1,5 +1,5 @@
 const { test, expect } = require('@playwright/test')
-const PageManager = require('../../src/pages/PageManager');
+const PageManager = require('../../src/manager/PageManager');
 const LoginWorkflow = require('../../src/workflows/LoginWorkflow');
 const users = require('../../src/data/user');
 

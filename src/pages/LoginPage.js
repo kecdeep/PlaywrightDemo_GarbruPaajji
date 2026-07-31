@@ -1,5 +1,6 @@
 
 const BasePage = require('./BasePage');
+const env = require('../config/config');
 
 class LoginPage extends BasePage {
 
@@ -23,6 +24,10 @@ class LoginPage extends BasePage {
         await this.enterText(this.txtPassword, user.password);
         await this.click(this.btnLogin);
 
+    }
+
+    async navigate() {
+        await super.navigate(env.baseURL);
     }
 }
 module.exports = LoginPage;

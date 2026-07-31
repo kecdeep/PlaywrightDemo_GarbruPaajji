@@ -1,6 +1,6 @@
-const LoginPage = require('./LoginPage');
-const HomePage = require('./HomePage');
-const ProductPage = require('./ProductPage');
+const LoginPage = require('../pages/LoginPage');
+const HomePage = require('../pages/HomePage');
+const ProductPage = require('../pages/ProductPage');
 
 class PageManager {
     constructor(page) {

@@ -7,7 +7,7 @@ try {
     });
 
     console.log("Running Playwright tests...");
-    execSync("npx playwright test tests/ui/alltest.spec.js --headed", {
+    execSync("npx playwright test tests/ui/order.spec.js --headed", {
         stdio: "inherit"
     });
 

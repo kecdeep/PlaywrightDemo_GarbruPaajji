@@ -4,7 +4,7 @@ const SessionManager = require('../../src/api/session/SessionManager');
 const loginPayload = require('../../src/api/payloads/loginPayload');
 const config = require('../../src/config/config');
 const ApiLoginWorkflow = require('../../src/workflows/ApiLoginWorkflow');
-const PageManager = require('../../src/pages/PageManager');
+const PageManager = require('../../src/manager/PageManager');
 const OrderWorkflow = require('../../src/workflows/OrderWorkflow');
 const users = require('../../src/data/user');
 

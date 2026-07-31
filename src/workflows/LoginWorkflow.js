@@ -1,4 +1,4 @@
-const PageManager = require('../pages/PageManager');
+const PageManager = require('../manager/PageManager');
 const config = require('../config/config');
 class LoginWorkflow {
 
